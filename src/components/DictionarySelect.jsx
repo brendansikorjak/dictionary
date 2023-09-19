@@ -1,28 +1,21 @@
 import { Chip, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { dictionariesUrl, randomWordUrl } from '../common/constant';
+import { useDictionary } from '../utils/DictionaryContext';
 
 export default function DictionarySelect(props) {
-  const [selectedDictionary, setSelectedDictionary] = useState(undefined);
-  const [dictionaries, setDictionaries] = useState([]);
+  const [state, dispatch] = useDictionary();
+  const [selectedDictionary, setSelectedDictionary] = useState(state[0]);
+  console.log('state', state);
 
   useEffect(() => {
-    fetch(dictionariesUrl)
-      .then((data) => data.json())
-      .then((data) => {
-        setDictionaries(data);
-        if (data.length > 0) {
-          props.setActiveDictionary(data[0]);
-          setSelectedDictionary(data[0]);
-        }
-      })
-      .catch((e) => console.log(e));
+    props.setActiveDictionary(state[0]);
   }, []);
 
   return (
     <Stack direction="column" spacing={2}>
-      {dictionaries &&
-        dictionaries.map((d, index) => (
+      {state &&
+        state.map((d, index) => (
           <Chip
             color={d._id === selectedDictionary._id ? 'primary' : 'secondary'}
             label={d.title}
