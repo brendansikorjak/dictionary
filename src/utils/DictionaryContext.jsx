@@ -18,6 +18,7 @@ export default function DictionaryProvider(props) {
   ];
 
   const [state, dispatch] = useState(initialState);
+  const [active, setActive] = useState(initialState[0]);
 
-  return <Provider value={[state, dispatch]} {...props} />;
+  return <Provider value={{ state, dispatch, active, setActive }} {...props} />;
 }

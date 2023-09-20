@@ -1,7 +1,3 @@
-// import { multiChoiceUrl } from '../common/constant';
-// import { useEffect, useState } from 'react';
-// import { Button, Stack, Typography } from '@mui/material';
-
 import { useEffect, useState } from 'react';
 import { multiChoiceUrl } from '../common/constant';
 import Stack from '@mui/material/Stack';
@@ -14,125 +10,78 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from '@mui/material';
+import { useDictionary } from '../utils/DictionaryContext';
 
-const MultipleChoice = (props) => {
-  const [choices, setChoices] = useState([]);
-  const [answer, setAnswer] = useState(undefined);
-  const [counter, setCounter] = useState(0);
-  const [activeQuestion, setActiveQuestion] = useState(false);
+export default function MultiChoice() {
+  const { active } = useDictionary();
 
-  const mainGame = () => {
-    pickAnswer();
-    setActiveQuestion(true);
+  const [data, setData] = useState([]); // Initialize data state with an empty array
+  const [correctIndex, setCorrectIndex] = useState(-1);
+  const [clicked, setClicked] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  const getWords = () => {
+    fetch(`${multiChoiceUrl}?tag=${active.tags[0]}`)
+      .then((data) => data.json())
+      .then((data) => {
+        setData(data);
+        const key = Math.floor(Math.random() * 3);
+        setCorrectIndex(key);
+        setSelectedIndex(-1);
+        setClicked(false);
+      });
   };
 
-  async function data() {
-    try {
-      const response = await fetch(
-        `${multiChoiceUrl}?tag=${props.activeDictionary.tags[0]}`
-      );
-      const data = await response.json();
-      setChoices(data);
-      return;
-    } catch (error) {
-      console.log(error);
-      return;
-    }
-  }
-
-  function pickAnswer() {
-    let rand = Math.floor(Math.random() * 3);
-    setAnswer(choices[rand]);
-  }
-
-  function regenQuestions(callback) {
-    data();
-    callback();
-  }
-
-  function checkAnswer(e) {
-    const selected = e.target.getAttribute('id');
-    console.log(selected);
-    if (selected == answer._id) {
-      !counter ? setCounter(1) : counterUP();
-      e.target.setAttribute('style', 'background-color:green;');
-      setTimeout(() => {
-        e.target.setAttribute('style', 'background-color:none;');
-        setChoices([]);
-        data();
-        setActiveQuestion(false);
-      }, 1000);
+  const definitionGame = (choice) => {
+    setClicked(true);
+    setSelectedIndex(choice);
+    if (choice === correctIndex) {
+      console.log('Winner');
     } else {
-      e.target.setAttribute('style', 'background-color:red;');
-      setTimeout(
-        () => e.target.setAttribute('style', 'background-color:none;'),
-        200
-      );
+      console.log('Loser');
     }
-  }
-
-  function counterUP() {
-    const set = counter + 1;
-    setCounter(set);
-  }
-  useEffect(() => {
-    data();
-    // pickAnswer()
-  }, [props.activeDictionary]);
+  };
 
   return (
-    <div>
-      <Button
-        variant="contained"
-        sx={{ background: 'green' }}
-        onClick={() => {
-          // pickAnswer()
-          mainGame();
-        }}
+    <Grid
+      container
+      //spacing={4}
+      direction="column"
+      justifyContent="space-between"
+      alignItems="center"
+      display="flex"
+    >
+      <Grid item xs={12}></Grid>
+      <Grid
+        container
+        //spacing={4}
+        direction="row"
+        justifyContent="flex-start"
+        alignItems="flex-start"
       >
-        NEW GAME{' '}
-      </Button>
+        <Grid item xs={2}></Grid>
+        <Grid item xs={8}>
+          <Button onClick={getWords} variant="contained">
+            NEW GAME
+          </Button>
+          <Stack direction="column" spacing={1}>
+            {data.map((d, index) => (
+              <Chip
+                label={d.word}
+                key={index}
+                onClick={() => definitionGame(index)}
+              />
+            ))}
+          </Stack>
 
-      {/* debug */}
-      {/* <Button
-        variant="contained"
-        sx={{ background: 'green' }}
-        onClick={() => {
-          console.log(answer);
-        }}
-      >
-        test{' '}
-      </Button> */}
-      {/* <Button variant="contained" sx={{ background: 'green' }} onClick={() => {
-                regenQuestions()
-            }} >GEN </Button> */}
-      <Typography variant="h6" gutterBottom sx={{ margin: '15px' }}>
-        {activeQuestion && answer && answer.word}
-      </Typography>
-
-      <div id="area">
-        <Stack>
-          {activeQuestion &&
-            answer &&
-            choices.map((choice, index) => {
-              return (
-                <Button
-                  color={choice._id === answer._id ? 'primary' : 'success'}
-                  sx={{ color: 'black' }}
-                  key={choice._id}
-                  onClick={(e) => checkAnswer(e)}
-                  id={choice._id}
-                >
-                  {choice.definition}
-                </Button>
-              );
-            })}
-        </Stack>
-
-        <div>Correct Answers : {counter}</div>
-      </div>
-    </div>
+          {correctIndex > -1 && <Chip label={data[correctIndex].definition} />}
+          {clicked && (
+            <Typography>
+              {selectedIndex === correctIndex ? 'You got it!' : 'Wrong!'}
+            </Typography>
+          )}
+        </Grid>
+      </Grid>
+    </Grid>
   );
-};
-
-export default MultipleChoice;
+}

@@ -5,25 +5,17 @@ import { theme } from './common/theme';
 import Home from './Home';
 import MultiChoice from './components/MultiChoice';
 import DictionarySelect from './components/DictionarySelect';
-import { useEffect, useState } from 'react';
 import DictionaryProvider from './utils/DictionaryContext';
 
 function App() {
-  const [activeDictionary, setActiveDictionary] = useState(undefined);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <DictionaryProvider>
-        <DictionarySelect setActiveDictionary={setActiveDictionary} />
+        <DictionarySelect />
         <Routes>
-          <Route
-            path="/"
-            element={<Home activeDictionary={activeDictionary} />}
-          />
-          <Route
-            path="/multi"
-            element={<MultiChoice activeDictionary={activeDictionary} />}
-          />
+          <Route path="/" element={<Home />} />
+          <Route path="/multi" element={<MultiChoice />} />
         </Routes>
       </DictionaryProvider>
     </ThemeProvider>

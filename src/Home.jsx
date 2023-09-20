@@ -12,14 +12,15 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { dictionariesUrl, randomWordUrl } from './common/constant';
 import TopDrawer from './components/TopDrawer';
-import DictionarySelect from './components/DictionarySelect';
+import { useDictionary } from './utils/DictionaryContext';
 
-const Home = (props) => {
-  const [activeDictionary, setActiveDictionary] = useState(undefined);
+const Home = () => {
+  const { active } = useDictionary();
+
   const [wordAndDefinition, setWordAndDefinition] = useState(undefined);
 
   const getRandomWord = () => {
-    fetch(`${randomWordUrl}?tag=${props.activeDictionary.tags[0]}`)
+    fetch(`${randomWordUrl}?tag=${active.tags[0]}`)
       .then((data) => data.json())
       .then((data) => setWordAndDefinition(data))
       .catch((e) => console.log(e));
@@ -29,10 +30,6 @@ const Home = (props) => {
     <>
       <TopDrawer />
       <Grid container spacing={4} direction="row">
-        <Grid item>
-          {/* <DictionarySelect setActiveDictionary={setActiveDictionary} /> */}
-        </Grid>
-
         <Grid item sm={4}>
           <Grid container direction="column" spacing={4}>
             <Grid item sm={4}>
