@@ -1,8 +1,6 @@
-# React + Vite
+Dictionary App built with React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Get a random word with the definition or play a multiple choice quiz to test your knowledge from any of the following dictionaries: French, General Biology, General Chemistry, General Geology, and Medical Terms!
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Click the link below to see how smart you are!
+https://main.d24rgv9ivojyz8.amplifyapp.com/
